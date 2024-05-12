@@ -1,0 +1,23 @@
+One of the topics I learned in completing this workshop is the `extern` keyword. Although 
+it is a simple concept, the actual implementation could be a bit confusing at first hand. 
+While working on part 1, I repeatedly got errors like "multiple definition of xxx", 
+"relocation against xxx in read-only section", "undefined reference to xxx", etc. In the 
+end, I did got it working. First, we can declare externs in the header file to let any 
+modules that import this header file "learned about" the existence of these shared 
+variables, and have the ability to use it. Second, we need to define those externs in one 
+of the implementation files. For this workshop, as we are only allowed to modify `w1_p1.
+cpp` in specific areas, the definition of the two global variables, as a result, has to 
+be in `FoodOrder.cpp`.
+
+Another topic I learned from this workshop is the review on the rule of 3. When working 
+with dynamic memory allocations, it is a good practice to declare 3 things: copy 
+constructor, assignment operator overload, and destructor. Part 2 of this workshop 
+requires us to upgrade one of the data members from a fixed length `char` pointer to one 
+that can point at a string with any length. Thus, we need to use dynamic memory 
+allocation for this part, and those 3 member functions have to be implemented.
+
+The last topic I learned from this workshop is the use of `std::string`, in IPC144 and 
+OOP244, I've been using C-style null-terminated strings. Although it can get tedious, I 
+am kind of used to it already. Instead, I was a bit unfamiliar to work with 
+`std::string`. Therefore, this workshop is a great starting point to get myself start 
+using `std::string` instead.

@@ -1,3 +1,11 @@
+/**
+ * Name:  Nathan Kong
+ * Email: nkong@myseneca.ca
+ * ID: 150950236
+ * Date: 2024-05-12
+ * I declare that this submission is the result of my own work and I only copied the code that my professor provided to complete my workshops and assignments. This submitted piece of work has not been shared with any other student or 3rd party content provider
+*/
+
 One of the topics I learned in completing this workshop is the `extern` keyword. Although 
 it is a simple concept, the actual implementation could be a bit confusing at first hand. 
 While working on part 1, I repeatedly got errors like "multiple definition of xxx", 
@@ -9,12 +17,37 @@ of the implementation files. For this workshop, as we are only allowed to modify
 cpp` in specific areas, the definition of the two global variables, as a result, has to 
 be in `FoodOrder.cpp`.
 
+
+The `static` keyword on the other hand, were more familiar to me. However, I would usually use it as a shared constant/variable across instances of objects, or as a "constant/variable owned by a class", by declaring a `static const` in a class. Something like the following:
+
+```C++
+class ClassA {
+public: static const int FOO;
+};
+
+// Then we can use it like:
+ClassA.FOO
+```
+
+```C++
+class ClassB {
+    static int bar {};
+    int m_id {};    // A UID that automatically increments for each object instantiated
+public:
+    ClassB() : m_id(++bar) { ... }
+};
+```
+
+This is just so happens to be similar to what we are doing in this workshop. However, instead of being a data member, the static variable is instead declared and defined inside a function.
+
+
 Another topic I learned from this workshop is the review on the rule of 3. When working 
 with dynamic memory allocations, it is a good practice to declare 3 things: copy 
 constructor, assignment operator overload, and destructor. Part 2 of this workshop 
 requires us to upgrade one of the data members from a fixed length `char` pointer to one 
 that can point at a string with any length. Thus, we need to use dynamic memory 
 allocation for this part, and those 3 member functions have to be implemented.
+
 
 The last topic I learned from this workshop is the use of `std::string`, in IPC144 and 
 OOP244, I've been using C-style null-terminated strings. Although it can get tedious, I 

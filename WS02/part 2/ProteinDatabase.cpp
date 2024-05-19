@@ -52,10 +52,12 @@ namespace seneca {
         proteinSequences = nullptr;
     }
 
+    // Copy
     ProteinDatabase::ProteinDatabase(const ProteinDatabase& other) {
         *this = other;
     }
 
+    // Copy
     ProteinDatabase& ProteinDatabase::operator=(const ProteinDatabase& other) {
         if (this != &other) {
             numProteinSequences = other.numProteinSequences;
@@ -67,6 +69,24 @@ namespace seneca {
                 proteinSequences[i] = other.proteinSequences[i];
             }
 
+        }
+        return *this;
+    }
+
+    // Move
+    ProteinDatabase::ProteinDatabase(ProteinDatabase&& other) {
+        *this = std::move(other);
+    }
+
+    // Move
+    ProteinDatabase& ProteinDatabase::operator=(ProteinDatabase&& other) {
+        if (this != &other) {
+            delete[] proteinSequences;
+            proteinSequences = other.proteinSequences;
+            other.proteinSequences = nullptr;
+            
+            numProteinSequences = other.numProteinSequences;
+            other.numProteinSequences = 0;
         }
         return *this;
     }

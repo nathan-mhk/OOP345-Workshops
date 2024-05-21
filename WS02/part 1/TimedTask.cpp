@@ -35,6 +35,7 @@ namespace seneca {
     inline void line(std::ostream& ostr) { ostr << "--------------------------" << std::endl; }
 
     std::ostream& operator<<(std::ostream& ostr, const TimedTask& timedTask) {
+        line(ostr);
         ostr << "Execution Times:" << std::endl;
         line(ostr);
 

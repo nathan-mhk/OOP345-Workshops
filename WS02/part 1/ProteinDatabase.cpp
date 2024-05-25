@@ -33,6 +33,7 @@ namespace seneca {
         proteinSequences = new std::string[numProteinSequences];
 
         // Re-reads the file
+        file.clear();
         file.seekg(0);
 
         for (size_t i = 0; file.good() && i < numProteinSequences; ++i) {

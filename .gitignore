@@ -32,5 +32,7 @@
 *.app
 
 reflect.txt
+reflect.md
 
 settings.json
+c_cpp_properties.json

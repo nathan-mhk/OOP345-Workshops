@@ -19,7 +19,7 @@ namespace seneca {
     Book::Book(const std::string& title, unsigned nChapters, unsigned nPages)
         : m_numChapters(nChapters), m_numPages(nPages) {
             m_title = title;
-            if (valid()) {
+            if (m_numChapters > 0) {
                 m_ratio = (double)m_numPages / m_numChapters;
             }
         }

@@ -25,6 +25,20 @@ namespace seneca {
         os.precision(1);
         os << std::fixed << item;
     }
+
+    inline void line(std::ostream& os) {
+        os << "| ---------------------------------------------------------------------------|" << std::endl;
+    }
+
+    void printBooks(std::ostream& os, const Book* books, const unsigned int& count) {
+        line(os);
+        for (unsigned int i = 0; i < count; ++i) {
+            os << "| ";
+            books[i].print(os);
+            os << " |" << std::endl;
+        }
+        line(os);
+    }
     
     template<typename T, unsigned int C>
     class Collection {
@@ -47,6 +61,14 @@ namespace seneca {
             if (item > m_largestItem)
                 m_largestItem = item;
         };
+
+        T& operator[](unsigned const int index) {
+            return m_items[index];
+        }
+
+        void incrSize() {
+            ++m_size;
+        }
     
     public:
         // Class Members
@@ -58,7 +80,7 @@ namespace seneca {
         unsigned int capacity() const { return m_capacity; };
 
         bool operator+=(const T& item) {
-            if (m_size == m_capacity) return false;
+            if (m_size >= m_capacity) return false;
 
             setSmallestItem(item);
             setLargestItem(item);
@@ -86,12 +108,28 @@ namespace seneca {
     template<typename T, unsigned int C>
     T Collection<T, C>::m_largestItem{-9999};
 
-    // Template Specialization
+    // Template Specializations
     template<>
     Book Collection<Book, 10>::m_smallestItem{"", 1, 10000};
 
     template<>
     Book Collection<Book, 10>::m_largestItem{"", 10000, 1};
+
+    template<>
+    Book Collection<Book, 72>::m_smallestItem{"", 1, 10000};
+
+    template<>
+    Book Collection<Book, 72>::m_largestItem{"", 10000, 1};
+
+    template<>
+    void Collection<Book, 10>::print(std::ostream& os) const {
+        printBooks(os, m_items, m_size);
+    }
+
+    template<>
+    void Collection<Book, 72>::print(std::ostream& os) const {
+        printBooks(os, m_items, m_size);
+    }
 }
 
 #endif // SENECA_COLLECTION_H

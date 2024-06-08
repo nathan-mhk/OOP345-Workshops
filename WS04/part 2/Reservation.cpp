@@ -16,8 +16,8 @@ namespace seneca {
 
     // Helper Functions
     std::string trim(const std::string& str) {
-        size_t start = str.find_first_not_of(' ');
-        size_t last = str.find_last_not_of(' ');
+        size_t start = str.find_first_not_of(" \r\n\t");
+        size_t last = str.find_last_not_of(" \r\n\t");
 
         if (start == std::string::npos) start = 0;
         if (last == std::string::npos) last = str.length() - 1;

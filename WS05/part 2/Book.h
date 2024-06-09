@@ -31,7 +31,21 @@ namespace seneca {
         double& price();
 
         friend std::ostream& operator<<(std::ostream& ostr, const Book& book);
+
+        template <typename T>
+        void fixSpelling(T& spellChecker) {
+            spellChecker(m_description);
+        }
     };
+}
+
+#endif
+
+#ifndef SENECA_UTILS
+#define SENECA_UTILS
+
+namespace seneca {
+    std::string trim(const std::string& str);
 }
 
 #endif

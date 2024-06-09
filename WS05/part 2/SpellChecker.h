@@ -9,8 +9,20 @@
 #ifndef SENECA_SPELLCHECKER_H
 #define SENECA_SPELLCHECKER_H
 
+#include <string>
+
 namespace seneca {
-    class SpellChecker {};
+    class SpellChecker {
+        static const int MAX_SIZE{6};
+        std::string m_badWords[MAX_SIZE]{};
+        std::string m_goodWords[MAX_SIZE]{};
+        size_t m_replaceCount[MAX_SIZE]{};
+
+    public:
+        SpellChecker(const char* filename);
+        void operator()(std::string& text);
+        void showStatistics(std::ostream& out) const;
+    };
 }
 
 #endif

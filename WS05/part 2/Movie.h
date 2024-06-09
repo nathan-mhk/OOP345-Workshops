@@ -9,8 +9,29 @@
 #ifndef SENECA_MOVIE_H
 #define SENECA_MOVIE_H
 
+#include <string>
+#include <iostream>
+
 namespace seneca {
-    class Movie {};
+    class Movie {
+        std::string m_title{};
+        size_t m_year{};
+        std::string m_description{};
+
+    public:
+        Movie() = default;
+        Movie(const std::string& strMove);
+
+        const std::string& title() const;
+
+        template <typename T>
+        void fixSpelling(T& spellChecker) {
+            spellChecker(m_title);
+            spellChecker(m_description);
+        }
+
+        friend std::ostream& operator<<(std::ostream& ostr, const Movie& movie);
+    };
 }
 
 #endif

@@ -87,7 +87,13 @@ int main(int argc, char** argv)
 	//            and save the new price in the book object
 	//       - if the book was published in UK between 1990 and 1999 (inclussive),
 	//            multiply the price with "gbpToCadRate" and save the new price in the book object
-
+	auto adjustBookPrice = [&](seneca::Book& book) {
+		if (book.country() == "US") {
+			book.price() *= usdToCadRate;
+		} else if (book.country() == "UK" && book.year() >= 1990 && book.year() <= 1999) {
+			book.price() *= gbpToCadRate;
+		}
+	};
 
 
 	std::cout << "-----------------------------------------\n";
@@ -98,8 +104,9 @@ int main(int argc, char** argv)
 
 	// TODO (from part #1): iterate over the library and update the price of each book
 	//         using the lambda defined above.
-
-
+	for (seneca::Book& book : library) {
+		adjustBookPrice(book);
+	}
 
 	std::cout << "-----------------------------------------\n";
 	std::cout << "The library content (updated prices)\n";

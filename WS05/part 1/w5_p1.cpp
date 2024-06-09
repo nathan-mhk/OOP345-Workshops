@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 				library[index++] = seneca::Book(line);
 			}
 		}
+		file.close();
 	}
 	else
 	{

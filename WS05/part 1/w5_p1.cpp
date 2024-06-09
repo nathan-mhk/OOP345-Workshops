@@ -30,6 +30,23 @@ int main(int argc, char** argv)
 		//       - lines that start with "#" are considered comments and should be ignored
 		//       - if the file cannot be open, print a message to standard error console and
 		//                exit from application with error code "AppErrors::CannotOpenFile"
+		std::ifstream file(argv[1], std::ios::in);
+
+		if (!file.is_open()) {
+			std::cerr << "ERROR: Cannot open file [" << argv[1] << "]. Aborting..." << std::endl;
+			exit(AppErrors::CannotOpenFile);
+		}
+
+		size_t index = 0;
+		
+		while (file.good() && index < 7) {
+			std::string line;
+			std::getline(file, line);
+
+			if (line[0] != '#') {
+				library[index++] = seneca::Book(line);
+			}
+		}
 	}
 	else
 	{
@@ -46,29 +63,37 @@ int main(int argc, char** argv)
 	//            and save the new price in the book object
 	//       - if the book was published in UK between 1990 and 1999 (inclussive),
 	//            multiply the price with "gbpToCadRate" and save the new price in the book object
-
-
+	auto adjustBookPrice = [&](seneca::Book& book) {
+		if (book.country() == "US") {
+			book.price() *= usdToCadRate;
+		} else if (book.country() == "UK" && book.year() >= 1990 && book.year() <= 1999) {
+			book.price() *= gbpToCadRate;
+		}
+	};
 
 	std::cout << "-----------------------------------------\n";
 	std::cout << "The library content\n";
 	std::cout << "-----------------------------------------\n";
 	// TODO: iterate over the library and print each book to the screen
-
-
+	for (seneca::Book& book : library) {
+		std::cout << book << std::endl;
+	}
 
 	std::cout << "-----------------------------------------\n\n";
 
 	// TODO: iterate over the library and update the price of each book
 	//         using the lambda defined above.
-
-
+	for (seneca::Book& book : library) {
+		adjustBookPrice(book);
+	}
 
 	std::cout << "-----------------------------------------\n";
 	std::cout << "The library content (updated prices)\n";
 	std::cout << "-----------------------------------------\n";
 	// TODO: iterate over the library and print each book to the screen
-
-
+	for (seneca::Book& book : library) {
+		std::cout << book << std::endl;
+	}
 
 	std::cout << "-----------------------------------------\n";
 

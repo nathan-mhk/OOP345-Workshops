@@ -42,7 +42,7 @@ namespace seneca {
         for (size_t i = 0; i < MAX_SIZE; i++) {
             const std::string& badWord = m_badWords[i];
 
-            size_t j = text.find(badWord, j);
+            size_t j = text.find(badWord, 0);
 
             while (j != std::string::npos) {
                 const std::string& goodWord = m_goodWords[i];
@@ -60,7 +60,8 @@ namespace seneca {
         out << "Spellchecker Statistics" << std::endl;
 
         for (size_t i = 0; i < MAX_SIZE; ++i) {
-            out << m_badWords[i] << ": " << m_replaceCount[i] << " replacements" << std::endl;
+            out.width(15);
+            out << std::right << m_badWords[i] << ": " << m_replaceCount[i] << " replacements" << std::endl;
         }
     }
 }

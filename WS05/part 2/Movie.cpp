@@ -26,8 +26,7 @@ namespace seneca {
         m_year = std::stoi(trim(temp.substr(start, end - start)));
 
         start = end + 1;
-        end = temp.find("\r\n", start);
-        m_description = trim(temp.substr(start, end - start));
+        m_description = trim(temp.substr(start));
     }
 
     const std::string& Movie::title() const { return m_title; }
@@ -40,5 +39,7 @@ namespace seneca {
         ostr << movie.m_year << " | ";
 
         ostr << movie.m_description << std::endl;
+
+        return ostr;
     }
 }

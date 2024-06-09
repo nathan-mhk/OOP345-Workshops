@@ -53,8 +53,7 @@ namespace seneca {
 
         // DESCRIPTION
         start = end + 1;
-        end = strBook.find("\r\n", start);
-        m_description = trim(strBook.substr(start, end - start));
+        m_description = trim(strBook.substr(start));
     }
     
     const std::string& Book::title() const { return m_title; }
@@ -82,7 +81,7 @@ namespace seneca {
         ostr.precision(2);
         ostr << std::right << std::fixed << book.m_price << " | ";
 
-        ostr << book.m_description;
+        ostr << book.m_description << std::endl;
 
         return ostr;
     }

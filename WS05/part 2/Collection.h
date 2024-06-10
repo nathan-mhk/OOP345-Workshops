@@ -17,7 +17,7 @@ namespace seneca {
         std::string m_name{};
         T* m_items{};
         size_t m_size{};
-        void (*m_observer) (const Collection<T>&, const T&) {};
+        void (*m_observer) (const Collection<T>&, const T&) {nullptr};
 
     public:
 

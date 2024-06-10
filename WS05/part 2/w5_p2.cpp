@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 		std::ifstream file(argv[2], std::ios::in);
 
 		if (!file.is_open()) {
-			std::cerr << "ERROR: Cannot open file [" << argv[1] << "]. Aborting..." << std::endl;
+			std::cerr << "ERROR: Cannot open file [" << argv[2] << "]. Aborting..." << std::endl;
 			exit(AppErrors::CannotOpenFile);
 		}
 

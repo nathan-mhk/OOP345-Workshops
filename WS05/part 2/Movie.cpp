@@ -15,16 +15,23 @@
 
 namespace seneca {
     Movie::Movie(const std::string& strMove) {
+        /**
+         * Format:
+         * TITLE,YEAR,DESCRIPTION
+         */
         std::string temp = strMove;
         
+        // TITLE
         size_t start = 0;
         size_t end = temp.find(',');
         m_title = trim(temp.substr(start, end - start));
 
+        // YEAR
         start = end + 1;
         end = temp.find(',', start);
         m_year = std::stoi(trim(temp.substr(start, end - start)));
 
+        // DESCRIPTION
         start = end + 1;
         m_description = trim(temp.substr(start));
     }

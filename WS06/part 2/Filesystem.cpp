@@ -22,6 +22,8 @@ namespace seneca {
 
         std::ifstream file(fileName);
         if (!file) {
+            delete m_root;
+            m_root = nullptr;
             throw "Cannot open file.";
         }
 
@@ -36,22 +38,22 @@ namespace seneca {
 
             std::string dirName{};
             if (isDir) {
-                dirName = line;
+                dirName = trim(line);
             } else {
                 // Current line represents a file
-                dirName = line.substr(0, pos);
+                dirName = trim(line.substr(0, pos));
             }
 
             // Construct the sub-paths
             std::vector<std::string> paths;
             size_t start = 0;
-            while (true) {
+            while (start < dirName.length()) {
                 size_t end = dirName.find_first_of('/', start);
                 if (end == std::string::npos) {
                     paths.push_back(trim(dirName.substr(start)));
                     break;
                 }
-                paths.push_back(trim(dirName.substr(start, end - start)));
+                paths.push_back(trim(dirName.substr(start, end - start + 1)));
                 start = end + 1;
             }
 
@@ -74,14 +76,17 @@ namespace seneca {
                     if (isDir || &path != &paths.back()) {
                         // Resource is a directory
                         Directory* newDir = new Directory(path);
+
                         newDir->update_parent_path(m_current->path());
+
                         *m_current += newDir;
                         m_current = newDir;
                     } else {
                         // Resource is a file
-                        std::string fileContent = trim(line.substr(pos + 1));
-                        File* newFile = new File(fileName, fileContent);
+                        File* newFile = new File(path, trim(line.substr(pos + 1)));
+
                         newFile->update_parent_path(m_current->path());
+
                         *m_current += newFile;
                     }
                 }

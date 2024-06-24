@@ -57,9 +57,65 @@ namespace seneca {
         return nullptr;
     }
 
-    Directory::~Directory() {
-        for (Resource* content : m_contents) {
-            delete content;
+    void Directory::remove(const std::string& name, const std::vector<OpFlags>& flags) {
+        for (std::vector<Resource*>::iterator itr = m_contents.begin(); itr != m_contents.end(); ++itr) {
+            if ((*itr)->name() != name) {
+                continue;
+            }
+
+            // Name matches
+            if ((*itr)->type() == NodeType::DIR) {
+                if (flags.size() <= 0 || flags[0] != OpFlags::RECURSIVE) {
+                    throw std::invalid_argument(std::string(name) + " is a directory. Pass the recursive flag to delete directories.");
+                }
+                Directory* dir = dynamic_cast<Directory*>(*itr);
+                delete dir;
+            } else {
+                delete *itr;
+            }
+            m_contents.erase(itr);
+            return;
         }
+        throw std::string(name) + " does not exist in " + m_name;
+    }
+
+    void Directory::display(std::ostream& ostr, const std::vector<FormatFlags>& flags) const {
+        ostr << "Total size: " << size() << " bytes\n";
+
+        bool detailed = flags.size() > 0 && flags[0] == FormatFlags::LONG;
+        for (const Resource* content : m_contents) {
+            bool isDir = content->type() == NodeType::DIR;
+            
+            if (isDir) {
+                ostr << "D | ";
+            } else {
+                ostr << "F | ";
+            }
+
+            ostr.width(15);
+            ostr << std::left << content->name() << " |";
+
+            if (detailed) {
+                ostr << " ";
+                if (isDir) {
+                    ostr.width(2);
+                    ostr << std::right << content->count() << " | ";
+                } else {
+                    ostr << "   | ";
+                }
+
+                ostr.width(10);
+                ostr << std::right << (std::to_string(content->size()) + " bytes") << " | ";
+            }
+            ostr << std::endl;
+        }
+    }
+
+    Directory::~Directory() {
+        for (Resource*& content : m_contents) {
+            delete content;
+            content = nullptr;
+        }
+        m_contents.clear();
     }
 }

@@ -4,6 +4,7 @@
 #include "Resource.h"
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace seneca {
     class Directory : public Resource {
@@ -22,6 +23,9 @@ namespace seneca {
         Directory& operator+=(Resource*);
 
         Resource* find(const std::string& name, const std::vector<OpFlags>& flags = {});
+        void remove(const std::string& name, const std::vector<OpFlags>& flags = {});
+
+        void display(std::ostream& ostr, const std::vector<FormatFlags>& flags = {}) const;
 
         ~Directory();
 

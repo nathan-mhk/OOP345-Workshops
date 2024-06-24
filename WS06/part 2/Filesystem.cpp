@@ -38,6 +38,7 @@ namespace seneca {
 
             std::string dirName{};
             if (isDir) {
+                // Current line represents a directory
                 dirName = trim(line);
             } else {
                 // Current line represents a file
@@ -50,9 +51,11 @@ namespace seneca {
             while (start < dirName.length()) {
                 size_t end = dirName.find_first_of('/', start);
                 if (end == std::string::npos) {
+                    // The last part of a path, should be the file name
                     paths.push_back(trim(dirName.substr(start)));
                     break;
                 }
+                // + 1 to include the `/` char ~~~~~~~~~~~~~~~~~~~~~~~~~~v
                 paths.push_back(trim(dirName.substr(start, end - start + 1)));
                 start = end + 1;
             }
@@ -72,7 +75,7 @@ namespace seneca {
                     }
                 } else {
                     // Resource DNE
-                    //           v~~~ Parts before the last part of FILE_PATH is a directory
+                    //           v~~~ Parts before the last part of FILE_PATH are directories
                     if (isDir || &path != &paths.back()) {
                         // Resource is a directory
                         Directory* newDir = new Directory(path);
@@ -83,6 +86,7 @@ namespace seneca {
                         m_current = newDir;
                     } else {
                         // Resource is a file
+                        // + 1 to exclude the `|` char ~~~~~~~~~~~~~~~~~~~~~~~v
                         File* newFile = new File(path, trim(line.substr(pos + 1)));
 
                         newFile->update_parent_path(m_current->path());

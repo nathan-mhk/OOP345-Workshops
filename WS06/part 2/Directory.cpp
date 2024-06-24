@@ -1,9 +1,7 @@
 #include "Directory.h"
 
 namespace seneca {
-    Directory::Directory(const std::string& dirName) {
-        m_name = dirName;
-    }
+    Directory::Directory(const std::string& dirName) { m_name = dirName; }
 
     void Directory::update_parent_path(const std::string& parentPath) {
         m_parent_path = parentPath;
@@ -44,14 +42,11 @@ namespace seneca {
         bool recursive = flags.size() > 0 && flags[0] == OpFlags::RECURSIVE;
 
         for (Resource* content : m_contents) {
-            if (content->name() == name) {
-                return content;
-            }
+            if (content->name() == name) return content;
+
             if (recursive && content->type() == NodeType::DIR) {
                 Resource* found = dynamic_cast<Directory*>(content)->find(name, flags);
-                if (found) {
-                    return found;
-                }
+                if (found) return found;
             }
         }
         return nullptr;
@@ -59,20 +54,20 @@ namespace seneca {
 
     void Directory::remove(const std::string& name, const std::vector<OpFlags>& flags) {
         for (std::vector<Resource*>::iterator itr = m_contents.begin(); itr != m_contents.end(); ++itr) {
-            if ((*itr)->name() != name) {
-                continue;
-            }
+            if ((*itr)->name() != name) continue;
 
             // Name matches
             if ((*itr)->type() == NodeType::DIR) {
                 if (flags.size() <= 0 || flags[0] != OpFlags::RECURSIVE) {
                     throw std::invalid_argument(std::string(name) + " is a directory. Pass the recursive flag to delete directories.");
                 }
+                // Invoke Directory::~Directory();
                 Directory* dir = dynamic_cast<Directory*>(*itr);
                 delete dir;
             } else {
                 delete *itr;
             }
+            // Remove from the vector
             m_contents.erase(itr);
             return;
         }
@@ -103,7 +98,6 @@ namespace seneca {
                 } else {
                     ostr << "   | ";
                 }
-
                 ostr.width(10);
                 ostr << std::right << (std::to_string(content->size()) + " bytes") << " | ";
             }

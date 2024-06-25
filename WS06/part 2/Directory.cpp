@@ -41,7 +41,7 @@ namespace seneca {
     Resource* Directory::find(const std::string& name, const std::vector<OpFlags>& flags) {
         bool recursive = flags.size() > 0 && flags[0] == OpFlags::RECURSIVE;
 
-        for (Resource* content : m_contents) {
+        for (Resource*& content : m_contents) {
             if (content->name() == name) return content;
 
             if (recursive && content->type() == NodeType::DIR) {
@@ -57,13 +57,8 @@ namespace seneca {
             if ((*itr)->name() != name) continue;
 
             // Name matches
-            if ((*itr)->type() == NodeType::DIR) {
-                if (flags.size() <= 0 || flags[0] != OpFlags::RECURSIVE) {
-                    throw std::invalid_argument(std::string(name) + " is a directory. Pass the recursive flag to delete directories.");
-                }
-                // Invoke Directory::~Directory();
-                Directory* dir = dynamic_cast<Directory*>(*itr);
-                delete dir;
+            if ((*itr)->type() == NodeType::DIR && (flags.size() <= 0 || flags[0] != OpFlags::RECURSIVE)) {
+                throw std::invalid_argument(std::string(name) + " is a directory. Pass the recursive flag to delete directories.");
             } else {
                 delete *itr;
             }

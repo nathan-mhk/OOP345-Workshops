@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <iostream>
 
 namespace seneca {
@@ -32,7 +33,10 @@ namespace seneca {
     public:
         Bakery(const std::string& fileName);
         void showGoods(std::ostream& os) const;
-
+        void sortBakery(const std::string& fieldName);
+        std::vector<BakedGood> combine(Bakery& other);
+        bool inStock(const std::string description, const BakedType bakedType) const;
+        std::list<BakedGood> outOfStock(const BakedType bakedType) const;
     };
     
     std::ostream& operator<<(std::ostream& os, const BakedGood& b);

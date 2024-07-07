@@ -9,6 +9,7 @@
 #include "Bakery.h"
 #include <fstream>
 #include <algorithm>
+#include <numeric>
 
 namespace seneca {
     // Helper Functions
@@ -51,9 +52,94 @@ namespace seneca {
 
     void Bakery::showGoods(std::ostream& os) const {
         // DO NOT USE MANUAL LOOPS
-        std::for_each(m_bakedGoods.begin(), m_bakedGoods.end(), [&os](const BakedGood& bg) {
-            os << bg;
-        });
+        size_t totalQty = std::accumulate(m_bakedGoods.begin(), m_bakedGoods.end(), 0,
+            [](size_t sum, const BakedGood& bg) {
+                return sum + bg.qty;
+            }
+        );
+
+        double totalPrice = std::accumulate(m_bakedGoods.begin(), m_bakedGoods.end(), 0.0,
+            [](double sum, const BakedGood& bg) {
+                return sum + bg.price;
+            }
+        );
+
+        std::for_each(m_bakedGoods.begin(), m_bakedGoods.end(),
+            [&os](const BakedGood& bg) {
+                os << bg << std::endl;
+            }
+        );
+
+        os << "Total Stock: " << totalQty << std::endl;
+
+        os << "Total Price: ";
+        os.precision(2);
+        os << std::fixed << totalPrice << std::endl;
+    }
+
+    void Bakery::sortBakery(const std::string& fieldName) {
+        // DO NOT USE MANUAL LOOPS
+        bool (*compare) (const BakedGood& bg1, const BakedGood& bg2){};
+
+        if (fieldName == "Description") {
+            compare = [](const BakedGood& bg1, const BakedGood& bg2) {
+                return bg1.description < bg2.description;
+            };
+        
+        } else if (fieldName == "Shelf") {
+            compare = [](const BakedGood& bg1, const BakedGood& bg2) {
+                return bg1.shelfLife < bg2.shelfLife;
+            };
+        } else if (fieldName == "Stock") {
+            compare = [](const BakedGood& bg1, const BakedGood& bg2) {
+                return bg1.qty < bg2.qty;
+            };
+        } else { // fieldName == "Price"
+            compare = [](const BakedGood& bg1, const BakedGood& bg2) {
+                return bg1.price < bg2.price;
+            };
+        }
+        std::sort(m_bakedGoods.begin(), m_bakedGoods.end(), compare);
+    }
+
+    std::vector<BakedGood> Bakery::combine(Bakery& other) {
+        // DO NOT USE MANUAL LOOPS
+        std::vector<BakedGood> combined{};
+
+        // Both input ranges must be sorted before using std::merge()
+        sortBakery("Price");
+        other.sortBakery("Price");
+
+        std::merge(
+            m_bakedGoods.begin(), m_bakedGoods.end(),
+            other.m_bakedGoods.begin(), other.m_bakedGoods.end(),
+            std::back_inserter(combined),
+            [](const BakedGood& bg1, const BakedGood& bg2) {
+                return bg1.price < bg2.price;
+            }
+        );
+        return combined;
+    }
+
+    bool Bakery::inStock(const std::string description, const BakedType bakedType) const {
+        // DO NOT USE MANUAL LOOPS
+        return std::any_of(m_bakedGoods.begin(), m_bakedGoods.end(),
+            [&description, &bakedType](const BakedGood& bg) {
+                return bg.description == description && bg.type == bakedType;
+            }
+        );
+    }
+
+    std::list<BakedGood> Bakery::outOfStock(const BakedType bakedType) const {
+        // DO NOT USE MANUAL LOOPS
+        std::list<BakedGood> OOS{};
+
+        std::copy_if(m_bakedGoods.begin(), m_bakedGoods.end(), std::back_inserter(OOS),
+            [&bakedType](const BakedGood& bg) {
+                return bg.type == bakedType && bg.qty == 0;
+            }
+        );
+        return OOS;
     }
 
     std::ostream& operator<<(std::ostream& os, const BakedGood& b) {
@@ -73,7 +159,7 @@ namespace seneca {
 
         os.width(8);
         os.precision(2);
-        os << std::right << std::fixed << b.price << " * " << std::endl;
+        os << std::right << std::fixed << b.price << " * ";
 
         return os;
     }

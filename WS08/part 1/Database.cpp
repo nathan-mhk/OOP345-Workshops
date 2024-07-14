@@ -19,8 +19,8 @@ namespace seneca {
         std::ifstream file(m_fileName);
         do {
             std::string key{};
-            file >> key >> m_values[m_size];
-
+            file >> key;
+            
             // Replace _ with space
             for (char& c : key) { 
                 if (c == '_') {
@@ -29,6 +29,8 @@ namespace seneca {
             }
 
             m_keys[m_size] = key;
+
+            file >> m_values[m_size];
             
         } while (++m_size < MAX_SIZE && !file.eof());
     }
@@ -66,7 +68,7 @@ namespace seneca {
 
         std::ofstream file(m_fileName + ".bkp.txt");
         for (size_t i = 0; i < m_size; ++i) {
-            file.width(20);
+            file.width(25);
             file << std::left << m_keys[i];
 
             file << " -> " << m_values[i] << std::endl;

@@ -28,7 +28,7 @@ namespace seneca {
                     c = ' ';
                 }
             }
-
+            
             m_keys[m_size] = key;
 
             T value{};

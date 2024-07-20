@@ -1,5 +1,13 @@
 // Workshop 9 - Multi-Threading, Thread Class
 
+/**
+ * Name:  Nathan Kong
+ * Email: nkong@myseneca.ca
+ * ID: 150950236
+ * Date: 2024-07-19
+ * I declare that this submission is the result of my own work and I only copied the code that my professor provided to complete my workshops and assignments. This submitted piece of work has not been shared with any other student or 3rd party content provider  
+*/
+
 #include <iostream>
 #include <fstream>
 #include <functional>
@@ -54,9 +62,27 @@ namespace seneca
 		//         into variables "total_items" and "data". Don't forget to allocate
 		//         memory for "data".
 		//       The file is binary and has the format described in the specs.
+		std::ifstream file(filename, std::ios::in | std::ios::binary);
 
+		if (file.good()) {
+			// `char` is 1B
+			char cPtr[sizeof(int)]{};
 
+			// First 4B is the total number of data items
+			file.read(cPtr, sizeof(int));
 
+			// Reinterpret the char* as an int* and dereference it
+			total_items = *(reinterpret_cast<int*>(cPtr));
+
+			data = new int[total_items];
+
+			for (int i = 0; file.good() && i < total_items; ++i) {
+				file.read(cPtr, sizeof(int));
+				data[i] = *(reinterpret_cast<int*>(cPtr));
+			}
+		}
+
+		file.close();
 
 		std::cout << "Item's count in file '"<< filename << "': " << total_items << std::endl;
 		std::cout << "  [" << data[0] << ", " << data[1] << ", " << data[2] << ", ... , "
@@ -92,8 +118,70 @@ namespace seneca
 	//   part of the data. Add computed variance-factors to obtain total variance.
 	// Save the data into a file with filename held by the argument `target_file`.
 	// Also, read the workshop instruction.
+	int ProcessData::operator()(const std::string& fileName, double& avg, double& var) {
+		// Average
+		auto avgFn = std::bind(computeAvgFactor, std::placeholders::_1, std::placeholders::_2, total_items, std::placeholders::_3);
 
+		std::vector<std::thread> threads;
+		for (int i = 0; i < num_threads; ++i) {
+			threads.push_back(
+				std::thread(
+					avgFn,
+					&data[p_indices[i]],	// Address of the first element of each partition
+					p_indices[i + 1] - p_indices[i],	// Number of elements in the partition
+					std::ref(averages[i])
+				)
+			);
+		}
 
+		for (std::thread& thread : threads) {
+			thread.join();
+		}
 
+		for (int i = 0; i < num_threads; ++i) {
+			avg += averages[i];
+		}
 
+		// Variance
+		auto varFn = std::bind(computeVarFactor, std::placeholders::_1, std::placeholders::_2, total_items, avg, std::placeholders::_3);
+
+		threads.clear();
+		for (int i = 0; i < num_threads; ++i) {
+			threads.push_back(
+				std::thread(
+					varFn,
+					&data[p_indices[i]],	// Address of the first element of each partition
+					p_indices[i + 1] - p_indices[i],	// Number of elements in the partition
+					std::ref(variances[i])
+				)
+			);
+		}
+
+		for (std::thread& thread : threads) {
+			thread.join();
+		}
+
+		for (int i = 0; i < num_threads; ++i) {
+			var += variances[i];
+		}
+
+		// Write to file
+		std::fstream file(fileName, std::ios::out | std::ios::binary | std::ios::trunc);
+
+		if (file.good()) {
+			char cPtr[sizeof(int)]{};
+
+			// The other way around, reinterpret cPtr as an int* and dereference it
+			*(reinterpret_cast<int*>(cPtr)) = total_items;
+			file.write(cPtr, sizeof(int));
+
+			for (int i = 0; file.good() && i < total_items; ++i) {
+				*(reinterpret_cast<int*>(cPtr)) = data[i];
+				file.write(cPtr, sizeof(int));
+			}
+		}
+
+		file.close();
+		return 0;
+	}
 }
